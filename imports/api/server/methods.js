@@ -132,9 +132,44 @@ Meteor.methods({
     {
 
     },
+
+    RegisterEdgeToken(edgeAccount) {
+
+       // Accounts.createUser();
+        const stampedLoginToken = LoginLinks.generateAccessToken(Meteor.user());
+        let user = Meteor.user()
+        user.services.edge = {
+            id: edgeAccount.id, // Edge ID
+            authorizationToken:stampedLoginToken
+
+        }
+        Meteor.users.update({_id:Meteor.userId()},user)
+        return user.services.edge
+    },
+    VerifyEmail(email){
+       // this.unblock();
+        if(Meteor.user().emails)
+        {
+            Accounts.removeEmail(Meteor.userId(),Meteor.user().emails["0"].address)
+        }
+
+        Accounts.addEmail(Meteor.userId(), email);
+        Accounts.sendVerificationEmail(Meteor.userId(), email);
+    },
     GetEdgeToken(edgeId)
     {
-      return Meteor.users.findOne({"services.edge.id":edgeId}).services.edge;
+        let user = Meteor.users.findOne({"services.edge.id":edgeId});
+
+
+        if(!user)
+        {
+            throw new Meteor.Error('REGISTER_USER', "User not found");
+        }
+        if(!user.emails[0].verified)
+        {
+            throw new Meteor.Error('REGISTER_USER', "Email not found or not validated");
+        }
+        return user.services.edge;
     },
     SetEdgeToken(account)
     {

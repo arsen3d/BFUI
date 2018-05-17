@@ -5,6 +5,7 @@ import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import { Link } from 'react-router-dom';
 import IntlMessages from '../../components/utility/intlMessages';
 import TopbarDropdownWrapper from './topbarDropdown.style';
+import gravatar from "gravatar"
 import {
   IconButtons,
   TopbarDropdown,
@@ -32,11 +33,28 @@ const theme = createMuiTheme({
   },
 });
 
+
+
 class TopbarUser extends Component {
-  state = {
+
+    state = {
     visible: false,
     anchorEl: null,
+    secureProfileUrl:"",
+    email:""
   };
+    constructor(props) {//'assetsPath': '/packages/node_modules/airbitz-core-js-ui/', bundlePath: '/packages/node_modules/airbitz-core-js-ui',
+        super(props);
+        //if(Meteor.user()){
+        Meteor.subscribe('myuser',(r)=>{
+                this.setState({
+                    secureProfileUrl: gravatar.url(Meteor.user().emails["0"].address, {s: '100', r: 'x', d: 'retro'}, true),
+                    email:Meteor.user().emails["0"].address
+                });
+
+            });
+        //}
+    }
   hide = () => {
     this.setState({ visible: false });
   };
@@ -51,12 +69,13 @@ class TopbarUser extends Component {
       <TopbarDropdown>
         <UserInformation>
           <div className="userImage">
-            <img src={Image} alt="user" />
+            <img src={this.state.secureProfileUrl} alt="user" />
           </div>
 
           <div className="userDetails">
-            <h3>Julian Smith</h3>
-            <p>CEO</p>
+            <h3>&nbsp;</h3>
+              <p>{this.state.email}</p>
+            {/*<p>CEO</p>*/}
           </div>
         </UserInformation>
 
@@ -89,7 +108,7 @@ class TopbarUser extends Component {
           onClick={this.handleVisibleChange}
         >
           <div className="userImgWrapper">
-            <img src={Image} alt="#" />
+            <img src={this.state.secureProfileUrl} alt="#" />
           </div>
         </IconButtons>
 

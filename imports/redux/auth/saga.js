@@ -4,12 +4,15 @@ import { clearToken, getToken } from '../../helpers/utility';
 import actions from './actions';
 
 const fakeApiCall = true; // auth0 or express JWT
+export function EdgeIt(id)
+{
 
-export function* loginRequest() {
-  if (fakeApiCall) {
+}
+export function* loginRequest({ payload }) {
+  if (payload) {
     yield put({
       type: actions.LOGIN_SUCCESS,
-      payload: { token: 'secret token' },
+      payload: { token: payload },
       profile: 'Profile'
     });
   } else {

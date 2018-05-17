@@ -15,6 +15,7 @@ import Auth0 from '../../../helpers/auth0/index';
 import Firebase from '../../../helpers/firebase';
 import FirebaseLogin from '../../../components/firebase';
 import { Checkbox } from './signup.style';
+import abcui from "airbitz-core-js-ui";
 
 const { login } = authAction;
 
@@ -35,6 +36,38 @@ class SignUp extends Component {
     login();
     this.props.history.push('/dashboard');
   };
+
+    handlEdgeReg = () => {
+        _abcUi = abcui.makeABCUIContext({'apiKey': 'c0f8c038bd10d138288ff2bd56dbcb999d22801f',
+            'appId': 'com.blockfreight.dashboard',
+
+            'vendorName': 'Blockfreight Dashboard',
+            'vendorImageUrl': 'https://mydomain.com/mylogo.png'});
+        _abcUi.openLoginWindow((error, account)=> {
+            let options= {};
+            options.username = account.id
+            options.password = ""+ Math.random();
+            Accounts.createUser(options,(err)=>{
+                if(err){
+                  console.log(err)
+                }
+                Meteor.call('RegisterEdgeToken', account, (error, result) => {
+                    if (error) {
+                        alert(error);
+                    } else {
+                        LoginLinks.loginWithToken(result.authorizationToken, (e, r) => {
+                            if (e) {
+                                //todo:add material ui notification
+                                return;
+                            }
+                            this.props.history.push("/confirm-email");
+                            // logged in!
+                        });
+                    }
+                })
+            })
+        });
+    }
   render() {
     return (
       <SignUpStyleWrapper className="mateSignUpPage">
@@ -61,60 +94,66 @@ class SignUp extends Component {
             <div className="mateSignInPageGreet">
               <h1>Join Blockfreight, it's free</h1>
               <p>
-                Welcome to Blockfreight, Please SignUp with your organization email account
-                information.
+                  Welcome to Blockfreight, Please SignUp with <a href="https://edgesecure.co/">Edge Wallet</a> Authenticator
+                  {/*your */}
+                  {/*organization email account*/}
+                {/*information.*/}
               </p>
             </div>
-            <div className="mateSignInPageForm">
-              <div className="mateInputWrapper">
-                <TextField
-                  label="Username"
-                  placeholder="Username"
-                  margin="normal"
-                />
-              </div>
-              <div className="mateInputWrapper">
-                <TextField
-                  label="Email"
-                  placeholder="Email"
-                  margin="normal"
-                  type="Email"
-                />
-              </div>
-              <div className="mateInputWrapper">
-                <TextField
-                  label="Password"
-                  placeholder="Password"
-                  margin="normal"
-                  type="Password"
-                />
-              </div>
-              <div className="mateInputWrapper">
-                <TextField
-                  label="Confirm Password"
-                  placeholder="Confirm Password"
-                  margin="normal"
-                  type="Password"
-                />
-              </div>
-            </div>
-            <div className="mateAgreement">
-              <div className="mateLoginSubmitCheck">
-                <Checkbox color="primary" className="mateTermsCheck" />
-                <span className="mateTermsText">
-                  <IntlMessages id="page.signUpTermsConditions" />
-                </span>
-              </div>
+            {/*<div className="mateSignInPageForm">*/}
+              {/*<div className="mateInputWrapper">*/}
+                {/*<TextField*/}
+                  {/*label="Username"*/}
+                  {/*placeholder="Username"*/}
+                  {/*margin="normal"*/}
+                {/*/>*/}
+              {/*</div>*/}
+              {/*<div className="mateInputWrapper">*/}
+                {/*<TextField*/}
+                  {/*label="Email"*/}
+                  {/*placeholder="Email"*/}
+                  {/*margin="normal"*/}
+                  {/*type="Email"*/}
+                {/*/>*/}
+              {/*</div>*/}
+              {/*<div className="mateInputWrapper">*/}
+                {/*<TextField*/}
+                  {/*label="Password"*/}
+                  {/*placeholder="Password"*/}
+                  {/*margin="normal"*/}
+                  {/*type="Password"*/}
+                {/*/>*/}
+              {/*</div>*/}
+              {/*<div className="mateInputWrapper">*/}
+                {/*<TextField*/}
+                  {/*label="Confirm Password"*/}
+                  {/*placeholder="Confirm Password"*/}
+                  {/*margin="normal"*/}
+                  {/*type="Password"*/}
+                {/*/>*/}
+              {/*</div>*/}
+            {/*</div>*/}
+            {/*<div className="mateAgreement">*/}
+              {/*<div className="mateLoginSubmitCheck">*/}
+                {/*<Checkbox color="primary" className="mateTermsCheck" />*/}
+                {/*<span className="mateTermsText">*/}
+                  {/*<IntlMessages id="page.signUpTermsConditions" />*/}
+                {/*</span>*/}
+              {/*</div>*/}
+              {/*<div className="mateLoginSubmit">*/}
+                {/*<Button type="primary" onClick={this.handleLogin}>*/}
+                  {/*Sign Up*/}
+                {/*</Button>*/}
+              {/*</div>*/}
+            {/*</div>*/}
+            {/*<div className="mateLoginSubmitText">*/}
+              {/*<span>or Sign Up with </span>*/}
+            {/*</div>*/}
               <div className="mateLoginSubmit">
-                <Button type="primary" onClick={this.handleLogin}>
-                  Sign Up
-                </Button>
+                  <Button type="primary" onClick={this.handlEdgeReg}>
+                      Edge Signup
+                  </Button>
               </div>
-            </div>
-            <div className="mateLoginSubmitText">
-              <span>or Sign Up with </span>
-            </div>
-
           </Scrollbars>
         </div>
       </SignUpStyleWrapper>

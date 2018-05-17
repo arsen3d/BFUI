@@ -12,15 +12,19 @@ import abcui from "airbitz-core-js-ui";
 const {login} = authAction;
 
 class SignIn extends Component {
-    constructor() {//'assetsPath': '/packages/node_modules/airbitz-core-js-ui/', bundlePath: '/packages/node_modules/airbitz-core-js-ui',
-        super();
+    constructor(props) {//'assetsPath': '/packages/node_modules/airbitz-core-js-ui/', bundlePath: '/packages/node_modules/airbitz-core-js-ui',
+        super(props);
         this.handleEdgeLogin = this.handleEdgeLogin.bind(this);
         _abcUi = abcui.makeABCUIContext({'apiKey': 'c0f8c038bd10d138288ff2bd56dbcb999d22801f',
             'appId': 'com.blockfreight.dashboard',
 
             'vendorName': 'Blockfreight Dashboard',
             'vendorImageUrl': 'https://mydomain.com/mylogo.png'});
+
     }
+
+
+
     state = {
         redirectToReferrer: false,
         username: 'demo@gmail.com',
@@ -34,21 +38,35 @@ class SignIn extends Component {
         ) {
             this.setState({redirectToReferrer: true});
         }
+        if(this.props !=undefined && this.props.match !=undefined && this.props.match.params.edge=="edge") {
+            handleEdgeLogin();
+        }
     }
 
-    handleEdgeLogin()  {
-
+    handleEdgeLogin = () => {
+        props = this.props;
         _abcUi.openLoginWindow((error, account)=> {
+            const {login} = this.props;
+            //login(account)
+            props.history.push("/dashboard");
             Meteor.call('GetEdgeToken', account.id, (error, result) => {
                 if (error) {
+                    if(error.error=="REGISTER_USER")
+                    {
+                        props.history.push("/signup");
+                        return;
+                    }
                     alert(error);
                 } else {
                     LoginLinks.loginWithToken(result.authorizationToken, (e, r) => {
                         if (e) {
                             //todo:add material ui notification
+                            alert(e);
                             return;
                         }
-                        this.props.history.push("/dashboard");
+                        const {login} = this.props;
+                        login(true)
+                        props.history.push("/dashboard");
                         // logged in!
                     });
                 }
@@ -96,49 +114,51 @@ class SignIn extends Component {
                         <div className="mateSignInPageGreet">
                             <h1>Hello,</h1>
                             <p>
-                                Welcome to Blockfreight, Please Login with your organization email account
-                                information.
+                                Welcome to Blockfreight, Please Login
+                                with <a href="https://edgesecure.co/">Edge Wallet</a> Authenticator
+                                {/*organization email account*/}
+                                {/*information.*/}
                             </p>
                         </div>
-                        <div className="mateSignInPageForm">
-                            <div className="mateInputWrapper">
-                                <TextField
-                                    label="Username"
-                                    placeholder="Username"
-                                    margin="normal"
-                                    value={username}
-                                    onChange={this.onChangeUsername}
-                                />
-                            </div>
-                            <div className="mateInputWrapper">
-                                <TextField
-                                    label="Password"
-                                    placeholder="Password"
-                                    margin="normal"
-                                    type="Password"
-                                    value={password}
-                                    onChange={this.onChangePassword}
-                                />
-                            </div>
-                            <div className="mateLoginSubmit">
-                                <Button type="primary" onClick={this.handleLogin}>
-                                    Login
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="mateLoginSubmitText">
-              <span>
-                * Username: demo@gmail.com , Password: demodemo or click on any
-                button.
-              </span>
-                        </div>
+                        {/*<div className="mateSignInPageForm">*/}
+                            {/*<div className="mateInputWrapper">*/}
+                                {/*<TextField*/}
+                                    {/*label="Username"*/}
+                                    {/*placeholder="Username"*/}
+                                    {/*margin="normal"*/}
+                                    {/*value={username}*/}
+                                    {/*onChange={this.onChangeUsername}*/}
+                                {/*/>*/}
+                            {/*</div>*/}
+                            {/*<div className="mateInputWrapper">*/}
+                                {/*<TextField*/}
+                                    {/*label="Password"*/}
+                                    {/*placeholder="Password"*/}
+                                    {/*margin="normal"*/}
+                                    {/*type="Password"*/}
+                                    {/*value={password}*/}
+                                    {/*onChange={this.onChangePassword}*/}
+                                {/*/>*/}
+                            {/*</div>*/}
+                            {/*<div className="mateLoginSubmit">*/}
+                                {/*<Button type="primary" onClick={this.handleLogin}>*/}
+                                    {/*Login*/}
+                                {/*</Button>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
+                        {/*<div className="mateLoginSubmitText">*/}
+                          {/*<span>*/}
+                            {/** Username: demo@gmail.com , Password: demodemo or click on any*/}
+                            {/*button.*/}
+                          {/*</span>*/}
+                        {/*</div>*/}
                         <div className="mateLoginOtherBtn">
                             <div className="mateLoginSubmit">
                                 <Button
                                     onClick={this.handleEdgeLogin}
 
 
-                                >Edge
+                                >Edge Login
                                 </Button>
                             </div>
                         </div>

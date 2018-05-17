@@ -52,6 +52,11 @@ export default class Settings extends React.Component {
         _abcUi.openLoginWindow((error, account)=> {
             Meteor.call('GetEdgeToken', account.id, (error, result) => {
                 if (error) {
+                    if(error.error=="REGISTER_USER")
+                    {
+                        FlowRouter.go("/signup");
+                        return;
+                    }
                     alert(error);
                 } else {
                     LoginLinks.loginWithToken(result.authorizationToken, (e, r) => {

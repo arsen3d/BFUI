@@ -37,7 +37,12 @@ const PublicRoutes = ({ history, isLoggedIn }) => (
         exact
         path="/signin"
         component={asyncComponent(() => import('./containers/Page/signin'))}
-      />
+    />
+        <Route
+            exact
+            path="/signin/:edge"
+            component={asyncComponent(() => import('./containers/Page/signin'))}
+        />
       <Route
         path="/auth0loginCallback"
         render={props => {
@@ -76,6 +81,20 @@ const PublicRoutes = ({ history, isLoggedIn }) => (
           import('./containers/Page/forgetpassword')
         )}
       />
+        <Route
+            exact
+            path="/confirm-email"
+            component={asyncComponent(() =>
+                import('./containers/Page/confirmEmail')
+            )}
+        />
+        <Route
+            exact
+            path="/verify-email/:token"
+            component={asyncComponent(() =>
+                import('./containers/Page/verifyEmail')
+            )}
+        />
       <Route
         exact
         path="/reset-password"
