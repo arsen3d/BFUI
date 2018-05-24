@@ -28,3 +28,4 @@ accounts-password
 simple:rest
 loren:login-links
 http@1.2.12
+base64@1.0.10

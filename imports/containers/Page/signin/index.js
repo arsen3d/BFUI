@@ -10,7 +10,7 @@ import SignInStyleWrapper from './signin.style';
 import abcui from "airbitz-core-js-ui";
 
 const {login} = authAction;
-
+const walletType = 'wallet:dashboard:blockfreight.com'
 class SignIn extends Component {
     constructor(props) {//'assetsPath': '/packages/node_modules/airbitz-core-js-ui/', bundlePath: '/packages/node_modules/airbitz-core-js-ui',
         super(props);
@@ -19,16 +19,14 @@ class SignIn extends Component {
             'appId': 'com.blockfreight.dashboard',
 
             'vendorName': 'Blockfreight Dashboard',
-            'vendorImageUrl': 'https://mydomain.com/mylogo.png'});
+            'vendorImageUrl': 'https://blockfreight.com/wp-content/uploads/2017/04/blockfreight_logo_grey.svg'});
 
     }
 
-
-
     state = {
         redirectToReferrer: false,
-        username: 'demo@gmail.com',
-        password: 'demodemo',
+        username: '',
+        password: '',
     };
 
     componentWillReceiveProps(nextProps) {
@@ -43,41 +41,49 @@ class SignIn extends Component {
         }
     }
 
-    handleEdgeLogin = () => {
-        props = this.props;
-        _abcUi.openLoginWindow((error, account)=> {
-            const {login} = this.props;
-            //login(account)
-            props.history.push("/dashboard");
-            Meteor.call('GetEdgeToken', account.id, (error, result) => {
-                if (error) {
-                    if(error.error=="REGISTER_USER")
-                    {
-                        props.history.push("/signup");
-                        return;
-                    }
-                    alert(error);
-                } else {
-                    LoginLinks.loginWithToken(result.authorizationToken, (e, r) => {
-                        if (e) {
-                            //todo:add material ui notification
-                            alert(e);
-                            return;
-                        }
-                        const {login} = this.props;
-                        login(true)
-                        props.history.push("/dashboard");
-                        // logged in!
-                    });
-                }
-            })
+     handleEdgeLogin  =  () =>{
+        abcUi = abcui.makeABCUIContext({'apiKey': 'c0f8c038bd10d138288ff2bd56dbcb999d22801f',
+            'appId': 'com.blockfreight.dashboard',
+            'accountType': 'account:repo:com.blockfreight.dashboard',
+            'vendorName': 'Blockfreight Dashboard',
+            'vendorImageUrl': 'https://blockfreight.com/wp-content/uploads/2017/04/blockfreight_logo_grey.svg'});
+        _abcUi.openLoginWindow((error, account) => {
+            if (error) {
+                console.log(error)
+            }
+            _account = account
+
+            this.abcWallet = account.getFirstWallet(walletType)
+            let options= {};
+            if (this.abcWallet == null) {
+                rops.history.push("/signup");
+            }else {
+                const {login} = this.props;
+                info = {username:this.abcWallet.id,password:this.abcWallet.keys.blockfreightKey,token:""}
+                info = login(info)
+                setTimeout(()=>{ this.ToDashboard(info)  },250)
+            }
         });
     }
+    ToDashboard = (info) =>
+    {
+        if(info.token.length)
+        {
+            this.props.history.push('/dashboard');
+        }else {
+            setTimeout(()=>{ this.ToDashboard(info)  },250)
+        }
+    }
+
     handleLogin = () => {
         const {login} = this.props;
         const {username, password} = this.state;
         login({username, password});
-        this.props.history.push('/dashboard');
+        setInterval(()=>{
+            console.log(this.state)
+            this.props.history.push('/dashboard');
+        },250)
+
     };
     onChangeUsername = event => this.setState({username: event.target.value});
     onChangePassword = event => this.setState({password: event.target.value});
@@ -120,104 +126,16 @@ class SignIn extends Component {
                                 {/*information.*/}
                             </p>
                         </div>
-                        {/*<div className="mateSignInPageForm">*/}
-                            {/*<div className="mateInputWrapper">*/}
-                                {/*<TextField*/}
-                                    {/*label="Username"*/}
-                                    {/*placeholder="Username"*/}
-                                    {/*margin="normal"*/}
-                                    {/*value={username}*/}
-                                    {/*onChange={this.onChangeUsername}*/}
-                                {/*/>*/}
-                            {/*</div>*/}
-                            {/*<div className="mateInputWrapper">*/}
-                                {/*<TextField*/}
-                                    {/*label="Password"*/}
-                                    {/*placeholder="Password"*/}
-                                    {/*margin="normal"*/}
-                                    {/*type="Password"*/}
-                                    {/*value={password}*/}
-                                    {/*onChange={this.onChangePassword}*/}
-                                {/*/>*/}
-                            {/*</div>*/}
-                            {/*<div className="mateLoginSubmit">*/}
-                                {/*<Button type="primary" onClick={this.handleLogin}>*/}
-                                    {/*Login*/}
-                                {/*</Button>*/}
-                            {/*</div>*/}
-                        {/*</div>*/}
-                        {/*<div className="mateLoginSubmitText">*/}
-                          {/*<span>*/}
-                            {/** Username: demo@gmail.com , Password: demodemo or click on any*/}
-                            {/*button.*/}
-                          {/*</span>*/}
-                        {/*</div>*/}
+
                         <div className="mateLoginOtherBtn">
                             <div className="mateLoginSubmit">
                                 <Button
                                     onClick={this.handleEdgeLogin}
-
-
                                 >Edge Login
                                 </Button>
                             </div>
                         </div>
-                        {/*<div className="mateLoginOtherBtn">*/}
-                        {/*<div className="mateLoginOtherBtnWrap">*/}
-                        {/*<Button*/}
-                        {/*onClick={this.handleLogin}*/}
-                        {/*type="primary btnFacebook"*/}
-                        {/*className="btnFacebook"*/}
-                        {/*>*/}
-                        {/*<div className="mateLoginOtherIcon">*/}
-                        {/*<img src={fbBtnSvg} alt="facebook Btn" />*/}
-                        {/*</div>*/}
-                        {/*<IntlMessages id="page.signInFacebook" />*/}
-                        {/*</Button>*/}
-                        {/*</div>*/}
-                        {/*<div className="mateLoginOtherBtnWrap">*/}
-                        {/*<Button*/}
-                        {/*onClick={this.handleLogin}*/}
-                        {/*type="primary btnGooglePlus"*/}
-                        {/*className="btnGooglePlus"*/}
-                        {/*>*/}
-                        {/*<div className="mateLoginOtherIcon">*/}
-                        {/*<img src={gpBtnSvg} alt="Google Plus Btn" />*/}
-                        {/*</div>*/}
-                        {/*<IntlMessages id="page.signInGooglePlus" />*/}
-                        {/*</Button>*/}
-                        {/*</div>*/}
-                        {/*<div className="mateLoginOtherBtnWrap">*/}
-                        {/*{Auth0.isValid ? (*/}
-                        {/*<Button*/}
-                        {/*type="primary btnAuthZero"*/}
-                        {/*className="btnAuthZero"*/}
-                        {/*onClick={() => {*/}
-                        {/*Auth0.login(this.handleLogin);*/}
-                        {/*}}*/}
-                        {/*>*/}
-                        {/*<div className="mateLoginOtherIcon">*/}
-                        {/*<img src={authBtnSvg} alt="Authentication Btn" />*/}
-                        {/*</div>*/}
-                        {/*<IntlMessages id="page.signInAuth0" />*/}
-                        {/*</Button>*/}
-                        {/*) : (*/}
-                        {/*<Button*/}
-                        {/*type="primary btnAuthZero"*/}
-                        {/*className="btnAuthZero"*/}
-                        {/*onClick={this.handleLogin}*/}
-                        {/*>*/}
-                        {/*<div className="mateLoginOtherIcon">*/}
-                        {/*<img src={authBtnSvg} alt="Authentication Btn" />*/}
-                        {/*</div>*/}
-                        {/*<IntlMessages id="page.signInAuth0" />*/}
-                        {/*</Button>*/}
-                        {/*)}*/}
-                        {/*</div>*/}
-                        {/*<div className="mateLoginOtherBtnWrap">*/}
-                        {/*{Firebase.isValid && <FirebaseLogin login={this.handleLogin} />}*/}
-                        {/*</div>*/}
-                        {/*</div>*/}
+
                     </Scrollbars>
                 </div>
             </SignInStyleWrapper>

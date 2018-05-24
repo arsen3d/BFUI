@@ -2,8 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import "/imports/api/server/methods"
 import "/imports/api/server/publish"
 Meteor.startup(() => {
-    process.env.MAIL_URL="smtp://apikey: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@smtp.sendgrid.net:587";
-  // code to run on server at startup
+   // process.env.MAIL_URL=""; //hard code for testing or set in env
     Accounts.emailTemplates.siteName = "Blockfreight";
     Accounts.emailTemplates.from = "Accounts accounts@blockfreight.com";
     Accounts.emailTemplates.verifyEmail = {
@@ -20,9 +19,5 @@ Meteor.startup(() => {
             return emailBody;
         }
     };
-    // Accounts.validateLoginAttempt (attempt) ->
-    // if attempt.user and attempt.user.emails and not attempt.user.emails[0].verified
-    // console.log "email not verified"
-    // return false # the login is aborted
-    // true
+
 });
