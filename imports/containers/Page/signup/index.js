@@ -24,7 +24,7 @@ var _wallet = null
 var _abcUi = null
 var _key = null
 
-const walletType = 'wallet:dashboard:blockfreight.com'
+const walletType = 'wallet:dashboard:com.blockfreight'
 
 class SignUp extends Component {
   state = {
@@ -59,19 +59,16 @@ class SignUp extends Component {
             'vendorName': 'Blockfreight Dashboard',
             'vendorImageUrl': 'https://blockfreight.com/wp-content/uploads/2017/04/blockfreight_logo_grey.svg'});
         _abcUi.openLoginWindow((error, account) => {
-
             //console.log(this.getAccountId(account));
             if (error) {
                 console.log(error)
             }
             _account = account
-
             this.abcWallet = account.getFirstWallet(walletType)
             let options= {};
             if (this.abcWallet == null) {
-                // Create an ethereum wallet if one doesn't exist:
                 const keys = {
-                    blockfreightKey: Base64.encode(crypto.randomBytes(32).toString("hex"))
+                    blockfreightKey:crypto.randomBytes(32).toString("hex")// Base64.encode()
                 }
                 account.createWallet(walletType, keys, function (e, id) {
                     if (e) {
@@ -101,7 +98,6 @@ class SignUp extends Component {
                 if ( error ) {
                     alert( error.reason, 'danger' );
                 } else {
-                  //  Bert.alert( 'Welcome!', 'success' );
                 }
             });
             this.setState({stage:"thankyou"})

@@ -310,10 +310,10 @@ Meteor.methods({
 
         return {result: 'OK'};
     },
-    BillOfLadin(headers, data) {
+    BillOfLading(headers, data) {
         const metaData = {
             type: 'POST',
-            path: '/api/billofladin',
+            path: '/api/billoflading',
             request: {
                 headers,
                 data

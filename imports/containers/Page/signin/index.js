@@ -10,7 +10,7 @@ import SignInStyleWrapper from './signin.style';
 import abcui from "airbitz-core-js-ui";
 
 const {login} = authAction;
-const walletType = 'wallet:dashboard:blockfreight.com'
+const walletType = 'wallet:dashboard:com.blockfreight'
 class SignIn extends Component {
     constructor(props) {//'assetsPath': '/packages/node_modules/airbitz-core-js-ui/', bundlePath: '/packages/node_modules/airbitz-core-js-ui',
         super(props);
